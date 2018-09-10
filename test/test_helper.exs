@@ -1,2 +1,2 @@
-Yggdrasil.Ethereum.Node.start_link()
+EthEvent.TestNode.start_link()
 ExUnit.start()

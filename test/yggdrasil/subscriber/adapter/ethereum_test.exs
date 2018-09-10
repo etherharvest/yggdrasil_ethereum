@@ -27,7 +27,7 @@ defmodule Yggdrasil.Subscriber.Adapter.EthereumTest do
 
   describe "distributes message" do
     setup do
-      mock_global &Yggdrasil.Ethereum.Node.server/1
+      mock_global &EthEvent.TestNode.server/1
 
       :ok
     end

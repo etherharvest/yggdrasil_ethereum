@@ -22,7 +22,7 @@ defmodule YggdrasilEthereum.MixProject do
   # Application
 
   defp elixirc_paths(:test) do
-    ["lib", "test/support"]
+    ["lib", "deps/eth_event/test/support"]
   end
   defp elixirc_paths(_) do
     ["lib"]
