@@ -1,25 +1,42 @@
 defmodule Yggdrasil.Ethereum.Application do
   @moduledoc """
-  [![Build Status](https://travis-ci.org/gmtprime/yggdrasil_ethereum.svg?branch=master)](https://travis-ci.org/gmtprime/yggdrasil_ethereum) [![Hex pm](http://img.shields.io/hexpm/v/yggdrasil_ethereum.svg?style=flat)](https://hex.pm/packages/yggdrasil_ethereum) [![hex.pm downloads](https://img.shields.io/hexpm/dt/yggdrasil_ethereum.svg?style=flat)](https://hex.pm/packages/yggdrasil_ethereum)
+  [![Build Status](https://travis-ci.org/etherharvest/yggdrasil_ethereum.svg?branch=master)](https://travis-ci.org/etherharvest/yggdrasil_ethereum) [![Hex pm](http://img.shields.io/hexpm/v/yggdrasil_ethereum.svg?style=flat)](https://hex.pm/packages/yggdrasil_ethereum) [![hex.pm downloads](https://img.shields.io/hexpm/dt/yggdrasil_ethereum.svg?style=flat)](https://hex.pm/packages/yggdrasil_ethereum)
 
   This project is an Ethereum adapter for `Yggdrasil` publisher/subscriber.
-
-  ![demo](https://raw.githubusercontent.com/gmtprime/yggdrasil_ethereum/master/images/demo.gif)
 
   ## Small example
 
   The following example uses Ethereum adapter to distribute messages:
 
-  First we need to configure [EthEvent](https://github.com/etherharvest/eth_event)
+  We need to configure [EthEvent](https://github.com/etherharvest/eth_event)
   which is the library use to request the events from contracts:
 
   ```elixir
   config :eth_event,
     node_url: "https://mainnet.infura.io/v3", # Can be a custom URL
-    node_key: "" # Empty for custom URL
+    node_key: "" # Infura key or empty for custom URL
   ```
 
-  And then we declare the event using the library:
+  And then we declare the event using `EthEvent` library. In this example,
+  we will declare a `Transfer(address,address,uint256)` _event_. These events are
+  declared in ERC20 tokens and they are _emitted_ when a successfull token
+  transfers has occurred between wallets. In Solidity, we would have:
+
+  ```solidity
+  contract SomeToken is ERC20 {
+
+    event Trasfer(
+      address indexed from,
+      address indexed to,
+      uint256 value
+    );
+
+    (...)
+  }
+  ```
+
+  Using `EthEvent` library, we can create an equivalent of the previous
+  event in Elixir as follows:
 
   ```elixir
   iex(1)> defmodule Transfer do
@@ -33,7 +50,9 @@ defmodule Yggdrasil.Ethereum.Application do
   iex(1)> end
   ```
 
-  We can subscribe to any contract that has that type of event:
+  We can now subscribe to any contract that has that type of event. For this
+  example, we are going to subscribe to the `Transfer` events from OmiseGo
+  contract. First we declare the channel:
 
   ```elixir
   iex(2)> contract = "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07" # OmiseGo
@@ -41,6 +60,11 @@ defmodule Yggdrasil.Ethereum.Application do
   iex(3)>   name: {Transfer, [address: contract]},
   iex(3)>   adapter: :ethereum
   iex(3)> }
+  ```
+
+  And then we subscribe to it:
+
+  ```elixir
   iex(4)> Yggdrasil.subscribe(channel)
   iex(5)> flush()
   {:Y_CONNECTED, %Yggdrasil.Channel{(...)}}
@@ -52,6 +76,9 @@ defmodule Yggdrasil.Ethereum.Application do
   iex(6)> flush()
   {:Y_EVENT, %Yggdrasil.Channel{(...)}, %Transfer{(...)}}
   ```
+
+  Where the struct `%Transfer{}` contains the information of a token
+  transfer between two wallet addresses.
 
   When we want to stop receiving messages, then we can unsubscribe
   from the channel as follows:

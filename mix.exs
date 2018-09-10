@@ -51,7 +51,7 @@ defmodule YggdrasilEthereum.MixProject do
   defp package do
     [
       description: "Ethereum events adapter for Yggdrasil (pub/sub)",
-      files: ["lib", "mix.exs", "images", "README.md", "test/support"],
+      files: ["lib", "mix.exs", "README.md"],
       maintainers: ["Alexander de Sousa"],
       licenses: ["MIT"],
       links: %{
