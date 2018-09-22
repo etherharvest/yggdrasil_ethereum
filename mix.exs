@@ -1,7 +1,7 @@
 defmodule YggdrasilEthereum.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.1.1"
   @root "https://github.com/etherharvest/yggdrasil_ethereum"
 
   def project do
